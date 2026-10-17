@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('content')
+<a class="text-sm text-emerald-800" href="{{ route('suppliers.index') }}">&larr; Suppliers</a><header class="my-6"><h1 class="text-3xl font-semibold">{{ $supplier->name }}</h1><p class="muted mt-2">Supplier report · all time · {{ $farm->currency }}{{ $supplier->trashed() ? ' · Archived supplier' : '' }}</p><p class="muted mt-2">{{ $supplier->phone }} {{ $supplier->email }}</p>@if($supplier->address)<p class="muted mt-2 whitespace-pre-line">{{ $supplier->address }}</p>@endif @if($supplier->notes)<p class="muted mt-2 whitespace-pre-line">{{ $supplier->notes }}</p>@endif</header>
+<div class="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">@foreach(['total' => 'Original purchase total', 'returns' => 'Return credits', 'paid' => 'Payments', 'refunds' => 'Refunds received', 'balance' => 'Net balance'] as $key => $label)<x-card :title="$label"><p class="text-2xl font-semibold">{{ number_format($totals[$key], 2) }}</p></x-card>@endforeach</div><p class="muted mb-6">{{ $totals['orders'] }} purchases, including pending orders. A negative net balance is supplier credit due back to the farm. Inventory purchases are not operating expenses.</p>
+<x-card title="Purchase history">@include('purchases.table')<div class="mt-5">{{ $purchases->links() }}</div></x-card>
+@endsection

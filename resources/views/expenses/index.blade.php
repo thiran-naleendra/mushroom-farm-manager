@@ -1,0 +1,9 @@
+@extends('layouts.app')
+@section('content')
+<header class="mb-6 flex flex-wrap justify-between gap-4"><h1 class="text-3xl font-semibold">Expenses</h1><x-button :href="route('expenses.create')">Add expense</x-button></header>
+<x-card><x-form :action="route('expenses.index')" method="GET" class="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5"><x-field name="search" label="Search" :value="request('search')"/><label>Category<select name="category"><option value="">All</option>@foreach($categories as $category)<option value="{{ $category->id }}" @selected(request('category') == $category->id)>{{ $category->name }}</option>@endforeach</select></label><x-field name="from" label="From" type="date" :value="request('from')"/><x-field name="to" label="To" type="date" :value="request('to')"/><x-button>Filter</x-button></x-form>
+<x-table label="Expenses"><x-slot:head><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Treatment</th><th>Actions</th></tr></x-slot:head>
+@forelse($expenses as $expense)<tr><td>{{ $expense->spent_on }}</td><td>{{ $expense->description }}</td><td>{{ $expense->category?->name ?? 'Uncategorized' }}</td><td>{{ $expense->currency ?? $farm->currency }} {{ $expense->amount }}</td><td>{{ $expense->treatment === 'operating' ? 'Operating expense' : 'Production payment (already capitalized)' }}</td><td><x-button :href="route('expenses.edit', $expense)" variant="secondary">Edit / history</x-button></td></tr>@empty<tr><td colspan="6">No expenses found.</td></tr>@endforelse
+</x-table><div class="mt-4">{{ $expenses->links() }}</div></x-card>
+<x-card title="Categories" class="mt-6"><p class="muted mb-4">Create categories such as labour, electricity, water, transport, rent, repairs or marketing.</p><x-form :action="route('expenses.categories')" class="flex flex-wrap items-end gap-3"><x-field name="name" label="Category name" required/><x-button>Add category</x-button></x-form></x-card>
+@endsection

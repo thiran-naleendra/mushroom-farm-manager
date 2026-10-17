@@ -1,0 +1,11 @@
+@extends('layouts.app')
+@section('content')
+@php($plan = $preview['plan'])
+@php($data = $preview['data'])
+<a class="text-sm text-emerald-800" href="{{ route('production.create') }}">&larr; Production form</a><header class="my-6"><h1 class="text-3xl font-semibold">Confirm bag production</h1><p class="muted mt-2">{{ $plan['recipe_name'] }} · {{ $plan['variety'] }} · {{ $data['bags'] }} bags · {{ $data['started_on'] }}</p></header>
+<x-card title="Scaled ingredient requirements"><x-table label="Production ingredients"><x-slot:head><tr><th scope="col">Material</th><th scope="col">Recipe-scaled quantity</th><th scope="col">Stock deduction</th><th scope="col">Available</th>@can('viewCosts', new \App\Models\Batch)<th scope="col">Ingredient cost</th>@endcan</tr></x-slot:head>
+    @foreach($plan['ingredients'] as $line)<tr><td>{{ $line['material_name'] }}</td><td>{{ $line['quantity'] }} {{ $line['input_unit'] }}</td><td>{{ $line['stock_quantity'] }} {{ $line['stock_unit'] }}</td><td>{{ $line['available'] }} {{ $line['stock_unit'] }}</td>@can('viewCosts', new \App\Models\Batch)<td>{{ $preview['currency'] }} {{ $line['total_cost'] }}</td>@endcan</tr>@endforeach
+</x-table><p class="muted mt-4">Stock deductions round up to six decimal places in the stock unit. Stock and costs are checked again when confirmed. This preview expires after 20 minutes.</p></x-card>
+@can('viewCosts', new \App\Models\Batch)<div class="my-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">@foreach(['Materials' => $plan['material_cost'], 'Labour' => $data['labour_cost'], 'Additional cost' => $data['additional_cost'], 'Total production cost' => $plan['total_cost'], 'Cost per growing bag' => $plan['cost_per_bag']] as $label => $value)<x-card :title="$label"><p class="break-words text-xl font-semibold">{{ $preview['currency'] }} {{ number_format($value, 6) }}</p></x-card>@endforeach</div>@endcan
+<div class="mt-6 flex flex-wrap gap-3"><x-form :action="route('production.store')"><input type="hidden" name="quote" value="{{ $quote }}"><x-button>Confirm &amp; deduct materials</x-button></x-form><x-form :action="route('production.preview')">@foreach($data as $key => $value)<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endforeach<x-button variant="secondary">Refresh material costs</x-button></x-form></div>
+@endsection

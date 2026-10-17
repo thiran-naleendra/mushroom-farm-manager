@@ -1,0 +1,6 @@
+<x-table label="Material purchases"><x-slot:head><tr><th scope="col">Reference / supplier</th><th scope="col">Date</th><th scope="col">Receiving</th><th scope="col">Original total</th><th scope="col">Payment status</th><th scope="col">Balance</th></tr></x-slot:head>
+    @forelse($purchases as $purchase)
+        @php($rowAmounts = \App\Services\PurchaseAmounts::fromTotals($purchase->total, $purchase->credits_sum, $purchase->paid_sum, $purchase->refunds_sum))
+        <tr><td><a class="font-semibold text-emerald-800 underline" href="{{ route('purchases.show', $purchase) }}">{{ $purchase->reference }}</a><p class="muted mt-1">{{ $purchase->supplier_name }}</p></td><td class="whitespace-nowrap">{{ $purchase->purchased_on }}</td><td><span class="badge">{{ ucfirst($purchase->status) }}</span></td><td class="whitespace-nowrap">{{ $farm->currency }} {{ number_format($purchase->total, 2) }}</td><td>{{ ucfirst(str_replace('_', ' ', $rowAmounts['payment_status'])) }}</td><td class="whitespace-nowrap">{{ $farm->currency }} {{ number_format($rowAmounts['balance'], 2) }}</td></tr>
+    @empty<tr><td colspan="6" class="py-8 text-center text-stone-500">No purchases recorded.</td></tr>@endforelse
+</x-table>

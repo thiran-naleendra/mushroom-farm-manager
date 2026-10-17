@@ -1,0 +1,2 @@
+@props(['name', 'label', 'checked' => false, 'description' => null])
+<div><input type="hidden" name="{{ $name }}" value="0"><label class="flex items-start gap-3"><input class="mt-1 size-4 shrink-0 accent-emerald-700" type="checkbox" name="{{ $name }}" value="1" @checked(old($name, $checked)) {{ $attributes }}><span><span class="block">{{ $label }}</span>@if($description)<span class="muted mt-1 block font-normal">{{ $description }}</span>@endif</span></label></div>
